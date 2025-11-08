@@ -1,0 +1,5 @@
+{
+    "base_elo" : "1500",
+    "k": "30",
+    "home_field_advantage_bonus" : "25"
+}

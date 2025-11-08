@@ -1,9 +1,9 @@
 from modules.nfl import get_nfl_time
 from modules.nfl_stats_downloader import download_data
 from modules.utils.file_utils import SERVER_DATA_PATH, create_directory
+from modules import elo
 
 import sys
-from pandas import DataFrame
 
 def main(task: str):
     if task == "--predict":
@@ -17,7 +17,10 @@ def main(task: str):
         pbp.to_csv(path_or_buf = f"{path}/Play-By-Play Data.csv", index = False)
         schedule.to_csv(path_or_buf = f"{path}/Schedule Data.csv", index = False)
 
-    # TODO: Create module for ELO Rating System
+        # Construct ELO Ratings
+        elo_ratings = elo.get_elo_ratings_df(schedule = schedule, current_week = current_week)
+        elo_ratings.to_csv(path_or_buf = f"{path}/ELO Ratings Data.csv", index = False)
+
     # TODO: Create module for creating datasets for the model
     # TODO: Create module for machine learning model
     pass

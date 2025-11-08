@@ -1,4 +1,4 @@
-from .utils.file_utils import SERVER_DATA_CONFIGS_PATH, read_json
+from .utils.file_utils import SERVER_DATA_CONFIGS_PATH, SERVER_DATA_PATH, read_json, get_dataframe
 
 import datetime as dt
 
@@ -28,3 +28,13 @@ def get_nfl_time() -> tuple[int, int]:
             return (current_season, current_week)
             
     return (current_season, 0) # Offseason
+
+def get_teams_names(abbreviated: bool = False):
+    path = f"{SERVER_DATA_PATH}/Team Info/team_desc.csv"
+    teams_df = get_dataframe(filepath = path)
+
+    if abbreviated:
+        return teams_df["team_abbr"]
+    
+    else:
+        return teams_df["team_name"]
