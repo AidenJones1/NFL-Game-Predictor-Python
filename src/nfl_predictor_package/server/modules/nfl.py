@@ -1,14 +1,15 @@
-def get_nfl_time():
+from .utils.file_utils import SERVER_DATA_CONFIGS_PATH, read_json
+
+import datetime as dt
+
+def get_nfl_time() -> tuple[int, int]:
     """Retrieve the current season and the current week of said season. 
 
     Returns:
         tuple(int, int): A tuple containing:
         - int: The current NFL Season.
         - int: The current week of the season. 0 represents offseason relative to the season."""
-    from .utils.file_utils import SERVER_DATA_CONFIGS, read_json
-    import datetime as dt
-
-    path = f"{SERVER_DATA_CONFIGS}/time_config.json"
+    path = f"{SERVER_DATA_CONFIGS_PATH}/time_config.json"
     configs = read_json(file_path = path)
 
     # Current Season
