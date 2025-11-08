@@ -1,8 +1,14 @@
+from modules.nfl import get_nfl_time
+
 import sys
 
 def main(task: str):
-    # TODO: Create module for accessing/saving in directories
+    if task == "--predict":
+        # Get time
+        current_season, current_week = get_nfl_time()
+
     # TODO: Create module for downloading stats
+    # TODO: Create module for accessing/saving in directories
     # TODO: Create module for ELO Rating System
     # TODO: Create module for creating datasets for the model
     # TODO: Create module for machine learning model

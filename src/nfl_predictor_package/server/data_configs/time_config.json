@@ -1,0 +1,94 @@
+{
+    "current_nfl_season" : "2025",
+
+    "dates" : {
+        "Week 1" : {
+            "start_date" : "2025-9-3",
+            "end_date" : "2025-9-8"
+        },
+        "Week 2" : {
+            "start_date" : "2025-9-9",
+            "end_date" : "2025-9-15"
+        },
+        "Week 3" : {
+            "start_date" : "2025-9-16",
+            "end_date" : "2025-9-22"
+        },
+        "Week 4" : {
+            "start_date" : "2025-9-23",
+            "end_date" : "2025-9-29"
+        },
+        "Week 5" : {
+            "start_date" : "2025-9-30",
+            "end_date" : "2025-10-6"
+        },
+        "Week 6" : {
+            "start_date" : "2025-10-7",
+            "end_date" : "2025-10-13"
+        },
+        "Week 7" : {
+            "start_date" : "2025-10-14",
+            "end_date" : "2025-10-20"
+        },
+        "Week 8" : {
+            "start_date" : "2025-10-21",
+            "end_date" : "2025-10-27"
+        },
+        "Week 9" : {
+            "start_date" : "2025-10-28",
+            "end_date" : "2025-11-3"
+        },
+        "Week 10" : {
+            "start_date" : "2025-11-4",
+            "end_date" : "2025-11-10"
+        },
+        "Week 11" : {
+            "start_date" : "2025-11-11",
+            "end_date" : "2025-11-17"
+        },
+        "Week 12" : {
+            "start_date" : "2025-11-18",
+            "end_date" : "2025-11-24"
+        },
+        "Week 13" : {
+            "start_date" : "2025-11-25",
+            "end_date" : "2025-12-1"
+        },
+        "Week 14" : {
+            "start_date" : "2025-12-2",
+            "end_date" : "2025-12-8"
+        },
+        "Week 15" : {
+            "start_date" : "2025-12-9",
+            "end_date" : "2025-12-15"
+        },
+        "Week 16" : {
+            "start_date" : "2025-12-16",
+            "end_date" : "2025-12-22"
+        },
+        "Week 17" : {
+            "start_date" : "2025-12-23",
+            "end_date" : "2025-12-29"
+        },
+        "Week 18" : {
+            "start_date" : "2025-12-30",
+            "end_date" : "2026-1-5"
+        },
+        "Week 19" : {
+            "start_date" : "2026-1-6",
+            "end_date" : "2026-1-12"
+        },
+        "Week 20" : {
+            "start_date" : "2026-1-13",
+            "end_date" : "2026-1-19"
+        },
+        "Week 21" : {
+            "start_date" : "2026-1-20",
+            "end_date" : "2026-1-26"
+        },
+        "Week 22" : {
+            "start_date" : "2026-1-27",
+            "end_date" : "2026-2-9"
+        }
+    }
+}
