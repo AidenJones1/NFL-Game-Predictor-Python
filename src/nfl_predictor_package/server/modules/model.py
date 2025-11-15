@@ -92,9 +92,9 @@ def make_predictions(schedule: DataFrame, x: DataFrame):
         away_team = schedule.iloc[i]["away_team"]
 
         if y[i] == 1:
-            prediction_string += f"{away_team} <-- {home_team}\n"
+            prediction_string += f"{away_team} --> {home_team}\n"
 
         elif y[i] == 0:
-            prediction_string += f"{away_team} --> {home_team}\n"
+            prediction_string += f"{away_team} <-- {home_team}\n"
 
     write_prediction(prediction_string, f"{season} NFL Season/Predictions/Week {week}.txt")
