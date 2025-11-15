@@ -1,9 +1,11 @@
 import json
 from os import makedirs, path
 from pandas import DataFrame, read_csv
+import pickle
 
 SERVER_DATA_CONFIGS_PATH = "./src/nfl_predictor_package/server/data_configs"
 SERVER_DATA_PATH = "./src/nfl_predictor_package/server/data"
+MODEL_PATH = "./src/nfl_predictor_package/server/models"
 
 def read_json(file_path: str):
     """Retrieve JSON properties from the specified JSON file.
@@ -23,3 +25,18 @@ def create_directory(directory_path: str):
 
 def get_dataframe(filepath: str) -> DataFrame:
     return read_csv(filepath_or_buffer = filepath, low_memory = False)
+
+def save_model(model):
+    with open(f"{MODEL_PATH}/model.pkl", 'wb') as f:
+        pickle.dump(model, f)
+
+def load_model():
+    with open(f"{MODEL_PATH}/model.pkl", 'rb') as f:
+        loaded_model = pickle.load(f)
+        return loaded_model
+    
+    return None
+
+def write_prediction(predictions: str, path):
+    with open(f"{SERVER_DATA_PATH}/{path}", "w") as file:
+        file.write(predictions)
