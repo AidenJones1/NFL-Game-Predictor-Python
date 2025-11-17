@@ -1,100 +1,103 @@
-from .utils.file_utils import SERVER_DATA_CONFIGS_PATH, read_json, load_model, write_prediction
-from .model_utils.model_utils import calculate_elo_difference, calculate_stat, calculate_stat_difference
+from .utils.file_utils import SERVER_DATA_CONFIGS_PATH, read_json, load_model, write_prediction, save_model
+from .model_utils.features import parse_features, parse_response
 
-from pandas import DataFrame, Series
+from pandas import DataFrame
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, roc_curve, auc
+from sklearn.metrics import accuracy_score, confusion_matrix
 
+class NFLPredictionModel():
+    def __init__(self, schedule: DataFrame, pbp: DataFrame, elo_ratings: DataFrame) -> None:
+        self.schedule = schedule
+        self.pbp = pbp
+        self.elo_ratings = elo_ratings
 
-def get_response(schedule: DataFrame) -> Series:
-    # Win Status
-    home_win_status = (schedule["result"] > 0).astype(int)
+    def create(self):
+        # Drop incomplete rows
+        features = parse_features(self.pbp, self.schedule, self.elo_ratings)
+        response = parse_response(self.schedule)
 
-    return home_win_status
+        dataset = features.copy()
+        dataset["home_win"] = response
+        dataset.to_csv("dataset.csv", index = False)
+        dataset = dataset.dropna()
 
-def get_features(pbp: DataFrame, schedule: DataFrame, elo_ratings: DataFrame) -> DataFrame:
-    path = f"{SERVER_DATA_CONFIGS_PATH}/learning_model_config.json"
-    configs = read_json(file_path = path)
-    
-    window = int(configs["games_window"])
+        # Split Dataset
+        X = dataset.iloc[:, :-1]
+        y = dataset.iloc[:, -1]
 
-    metrics = DataFrame({
-        "home_field_advantage": [],
-        "elo_difference": [],
-        "off_epa_difference": [],
-        "def_epa_difference": [],
-        "off_avg_yards_difference": [],
-        "def_avg_yards_difference": [],
-        "off_avg_td_difference": [],
-        "def_avg_td_difference": [],
-        "rest_days_difference": []
-    })
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3, random_state = 42)
+        
+        scalar = StandardScaler()
+        X_train = scalar.fit_transform(X_train)
+        X_test = scalar.transform(X_test)
+        
+        self.testing_set = (X_test, y_test)
 
-    # Home Field Advantage
-    metrics["home_field_advantage"] = (schedule["location"] == "Home").astype(int)
+        # Train Model
+        self.model = LogisticRegression()
+        self.model.fit(X_train, y_train)
 
-    # ELO Difference
-    metrics["elo_difference"] = schedule.apply(lambda x: calculate_elo_difference(x, elo_df = elo_ratings), axis = 1)
+    def print_test(self):
+        if not self.__check_for_model():
+            return
+        
+        # Test Model
+        y_pred = self.model.predict(self.testing_set[0])
 
-    # EPA per play / Game (last 5 games)
-    rolling_epa = calculate_stat(schedule, pbp, "epa", "mean", window)
-    metrics[["off_epa_difference", "def_epa_difference"]] = schedule.apply(lambda x: calculate_stat_difference(rolling_epa, x), axis = 1)
+        accuracy = accuracy_score(self.testing_set[1], y_pred)
+        cnf_matrix = confusion_matrix(self.testing_set[1], y_pred)
 
-    # Total Yards / Game  (last 5 games)
-    rolling_total_yards = calculate_stat(schedule, pbp, "yards_gained", "sum", window)
-    metrics[["off_avg_yards_difference", "def_avg_yards_difference"]] = schedule.apply(lambda x: calculate_stat_difference(rolling_total_yards, x), axis = 1)
-
-    # Total Touchdowns / Game (last 5 games)
-    rolling_td = calculate_stat(schedule, pbp, "touchdown", "sum", window)
-    metrics[["off_avg_td_difference", "def_avg_td_difference"]] = schedule.apply(lambda x: calculate_stat_difference(rolling_td, x), axis = 1)
-
-    # Rest Days Difference
-    metrics["rest_days_difference"] = schedule["home_rest"] - schedule["away_rest"]
-
-    return metrics
-
-def create_model(X: DataFrame, y: Series, print_test_results: bool):
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3, random_state = 42)
-
-    scalar = StandardScaler()
-    X_train = scalar.fit_transform(X_train)
-    X_test = scalar.transform(X_test)
-
-    model = LogisticRegression()
-    model.fit(X_train, y_train)
-
-    y_pred = model.predict(X_test)
-
-    accuracy = accuracy_score(y_test, y_pred)
-    cnf_matrix = confusion_matrix(y_test, y_pred)
-
-    if print_test_results:
+        # Print Test Results
         print("\nTEST PERFORMANCE")
-        print(f"Coefficients: {model.coef_}")
+        print(f"Coefficients: {self.model.coef_}")
         print("Accuracy: {:.2f}%".format(accuracy * 100))
         print(f"Confidence Matrix:\n{cnf_matrix}")
 
-    return model
-
-def make_predictions(schedule: DataFrame, x: DataFrame):
-    prediction_string = ""
-    model: LogisticRegression = load_model()
+    def make_predictions(self):
+        if not self.__check_for_model():
+            return
+        
+        prediction_string = ""
     
-    y = model.predict(x)
+        # Get Data
+        X = parse_features(self.pbp, self.schedule, self.elo_ratings)
+        y = self.model.predict(X)
 
-    season = int(schedule.iloc[0]["season"])
-    week = int(schedule.iloc[0]["week"])
+        season = int(self.schedule.iloc[0]["season"])
+        week = int(self.schedule.iloc[0]["week"])
 
-    for i in range(schedule.shape[0]):
-        home_team = schedule.iloc[i]["home_team"]
-        away_team = schedule.iloc[i]["away_team"]
+        for i in range(self.schedule.shape[0]):
+            home_team = self.schedule.iloc[i]["home_team"]
+            away_team = self.schedule.iloc[i]["away_team"]
 
-        if y[i] == 1:
-            prediction_string += f"{away_team} --> {home_team}\n"
+            if y[i] == 1:
+                prediction_string += f"{away_team} --> {home_team}\n"
 
-        elif y[i] == 0:
-            prediction_string += f"{away_team} <-- {home_team}\n"
+            elif y[i] == 0:
+                prediction_string += f"{away_team} <-- {home_team}\n"
 
-    write_prediction(prediction_string, f"{season} NFL Season/Predictions/Week {week}.txt")
+        write_prediction(prediction_string, f"{season} NFL Season/Predictions/Week {week}.txt")
+
+    def save(self, filename: str):
+        if self.__check_for_model():
+            save_model(self.model, filename)
+            print("Model saved!!!")
+            
+
+    def load(self, model_file: str):
+        loaded_model = load_model(model_file)
+
+        if not loaded_model:
+            print("Model filename not found. Ensure that it is located in 'src/server/models'")
+            return
+        
+        self.model = loaded_model
+
+    def __check_for_model(self):
+        if not self.model:
+            print("Model not created!!! Either create a new model or load an existing model.")
+            return False
+        
+        return True

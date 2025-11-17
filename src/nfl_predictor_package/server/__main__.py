@@ -1,7 +1,7 @@
 from modules.nfl import get_nfl_time
 from modules.nfl_stats_downloader import download_data
 from modules.utils.file_utils import SERVER_DATA_PATH, create_directory, save_model
-from modules.model import get_features, get_response, create_model, make_predictions
+from modules.model import NFLPredictionModel
 from modules import elo
 
 import sys
@@ -29,22 +29,16 @@ def main(task: str, options: list[str]):
         # Get data
         pbp, schedule, elo_ratings = get_data(season = season, week = week)
 
-        response = get_response(schedule = schedule)
-        metrics = get_features(pbp = pbp, schedule = schedule, elo_ratings = elo_ratings)
+        model = NFLPredictionModel(schedule, pbp, elo_ratings)
+        model.create()
 
-        dataset = metrics.copy()
-        dataset["home_win"] = response
-        dataset = dataset.dropna()
-
-        x = dataset.iloc[:, :-1]
-        y = dataset.iloc[:, -1]
-
-        model = create_model(X = x, y = y, print_test_results = "--print" in options)
+        # Print Testing Results
+        if "--print" in options:
+            model.print_test()
 
         # Save
         if "--save" in options:
-            save_model(model = model)
-            print("\nMODEL SAVED!!!")
+            model.save("model.pkl")
 
     elif task == "--predict":
         # Current NFL season/week
@@ -53,11 +47,10 @@ def main(task: str, options: list[str]):
         # Get data
         pbp, schedule, elo_ratings = get_data(season = season, week = week)
         schedule = schedule[schedule["week"] == week] # Only get current week
-        #schedule = schedule[schedule['result'].isna()] # Only get games that haven't been played
 
-        x = get_features(pbp = pbp, schedule = schedule, elo_ratings = elo_ratings)
-
-        make_predictions(schedule, x)
+        model = NFLPredictionModel(schedule, pbp, elo_ratings)
+        model.load("model.pkl")
+        model.make_predictions()
 
 if __name__ == "__main__":
     # Check if an argument exist

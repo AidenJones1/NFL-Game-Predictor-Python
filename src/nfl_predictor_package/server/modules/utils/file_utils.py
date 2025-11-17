@@ -26,12 +26,12 @@ def create_directory(directory_path: str):
 def get_dataframe(filepath: str) -> DataFrame:
     return read_csv(filepath_or_buffer = filepath, low_memory = False)
 
-def save_model(model):
-    with open(f"{MODEL_PATH}/model.pkl", 'wb') as f:
+def save_model(model, filename: str):
+    with open(f"{MODEL_PATH}/{filename}", 'wb') as f:
         pickle.dump(model, f)
 
-def load_model():
-    with open(f"{MODEL_PATH}/model.pkl", 'rb') as f:
+def load_model(filename: str):
+    with open(f"{MODEL_PATH}/{filename}", 'rb') as f:
         loaded_model = pickle.load(f)
         return loaded_model
     
