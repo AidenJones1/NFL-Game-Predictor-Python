@@ -36,7 +36,3 @@ def load_model(filename: str):
         return loaded_model
     
     return None
-
-def write_prediction(predictions: str, path):
-    with open(f"{SERVER_DATA_PATH}/{path}", "w") as file:
-        file.write(predictions)

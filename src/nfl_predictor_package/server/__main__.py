@@ -1,35 +1,20 @@
 from modules.nfl import get_nfl_time
-from modules.nfl_stats_downloader import download_data
-from modules.utils.file_utils import SERVER_DATA_PATH, create_directory, save_model
-from modules.model import NFLPredictionModel
-from modules import elo
+from modules.nfl_utils.nfl_stats_downloader import NFLData
+from modules.model import NFLPredictionModel, evaluate_predictions, get_predictions
 
 import sys
-from pandas import DataFrame
-
-def get_data(season: int, week: int) -> tuple[DataFrame, DataFrame, DataFrame]:
-    # Get data from season
-    pbp, schedule = download_data(season = season)
-
-    path = create_directory(directory_path = f"{SERVER_DATA_PATH}/{season} NFL Season")
-    pbp.to_csv(path_or_buf = f"{path}/Play-By-Play Data.csv", index = False)
-    schedule.to_csv(path_or_buf = f"{path}/Schedule Data.csv", index = False)
-
-    # Construct ELO Ratings
-    elo_ratings = elo.get_elo_ratings_df(schedule = schedule, current_week = week)
-    elo_ratings.to_csv(path_or_buf = f"{path}/ELO Ratings Data.csv", index = False)
-
-    return pbp, schedule, elo_ratings
 
 def main(task: str, options: list[str]):
+
     if task == "--train/test":
         season = 2024
         week = 23
 
-        # Get data
-        pbp, schedule, elo_ratings = get_data(season = season, week = week)
+        # Get Data
+        data = NFLData(season, week)
 
-        model = NFLPredictionModel(schedule, pbp, elo_ratings)
+        # Model
+        model = NFLPredictionModel(data.schedule, data.pbp, data.elo_ratings)
         model.create()
 
         # Print Testing Results
@@ -44,11 +29,25 @@ def main(task: str, options: list[str]):
         # Current NFL season/week
         season, week = get_nfl_time()
 
-        # Get data
-        pbp, schedule, elo_ratings = get_data(season = season, week = week)
-        schedule = schedule[schedule["week"] == week] # Only get current week
+        if week == 0 or week == 1:
+            print("Currently in offseason or week 1. No predictions were made.")
+            return
+        
+        last_week = week - 1
 
-        model = NFLPredictionModel(schedule, pbp, elo_ratings)
+        # Get Data
+        data = NFLData(season, week)
+
+        # Split the schedule into current week and last week
+        current_schedule = data.schedule[data.schedule["week"] == week]
+        last_week_schedule = data.schedule[data.schedule["week"] == last_week]
+
+        # Evaluate last week predicitons
+        last_week_predictions = get_predictions(season, last_week)
+        evaluate_predictions(last_week_schedule, last_week_predictions)
+
+        # Model
+        model = NFLPredictionModel(current_schedule, data.pbp, data.elo_ratings)
         model.load("model.pkl")
         model.make_predictions()
 

@@ -42,7 +42,7 @@ def calculate_stat(schedule: DataFrame, pbp: DataFrame, stat: str, func: str, wi
     off_game_stat: DataFrame = pbp.groupby(["game_id", "posteam", "season", "week"]).agg({stat: func}).reset_index()
     def_game_stat: DataFrame = pbp.groupby(["game_id", "defteam", "season", "week"]).agg({stat: func}).reset_index()
 
-    # Calculate the average epa/play within an n game window
+    # Calculate the average statline within an n game window
     off_game_stat[f"rolling_stat"] = (
     off_game_stat.groupby(["posteam", "season"], group_keys = False)[stat]
         .apply(lambda x: x.shift().rolling(window, min_periods = 1).mean()))    

@@ -1,6 +1,7 @@
 from .utils.file_utils import SERVER_DATA_CONFIGS_PATH, SERVER_DATA_PATH, read_json, get_dataframe
 
 import datetime as dt
+from pandas import Series
 
 def get_nfl_time() -> tuple[int, int]:
     """Retrieve the current season and the current week of said season. 
@@ -29,7 +30,15 @@ def get_nfl_time() -> tuple[int, int]:
             
     return (current_season, 0) # Offseason
 
-def get_teams_names(abbreviated: bool = False):
+def get_teams_names(abbreviated: bool = False) -> Series:
+    """Retrieve the list of team names in either its full or abbreviated version.
+
+    Args:
+        abbreviated (bool, optional): Choose whether to abbreviate the names. Defaults to False.
+
+    Returns:
+        Series: A Series of NFL teams' names.
+    """
     path = f"{SERVER_DATA_PATH}/Team Info/team_desc.csv"
     teams_df = get_dataframe(filepath = path)
 
@@ -38,3 +47,4 @@ def get_teams_names(abbreviated: bool = False):
     
     else:
         return teams_df["team_name"]
+    

@@ -66,7 +66,7 @@ def get_elo_ratings_df(schedule: DataFrame, current_week: int) -> DataFrame:
 
             elo_df.loc[elo_df["Team"] == away_team, f"Week {week}"] = away_team_elo
             elo_df.loc[elo_df["Team"] == home_team, f"Week {week}"] = home_team_elo
-        # End of week schedule loop
+        # End of week's schedule loop
 
         # Fill team's with BYE week ELO Rating from last week
         teams_played = set(week_schedule["home_team"]).union(set(week_schedule["away_team"]))

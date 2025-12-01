@@ -17,6 +17,10 @@ def parse_features(pbp: DataFrame, schedule: DataFrame, elo_ratings: DataFrame) 
         "def_avg_yards_difference": [],
         "off_avg_td_difference": [],
         "def_avg_td_difference": [],
+        #"off_avg_interception_difference": [],
+        #"def_avg_interception_difference": [],
+        #"off_avg_fumbles_lost_difference": [],
+        #"def_avg_fumbles_lost_difference": [],
         "rest_days_difference": []
     })
 
@@ -37,6 +41,12 @@ def parse_features(pbp: DataFrame, schedule: DataFrame, elo_ratings: DataFrame) 
     # Total Touchdowns / Game (last 5 games)
     rolling_td = calculate_stat(schedule, pbp, "touchdown", "sum", window)
     metrics[["off_avg_td_difference", "def_avg_td_difference"]] = schedule.apply(lambda x: calculate_stat_difference(rolling_td, x), axis = 1)
+
+    #rolling_interception = calculate_stat(schedule, pbp, "interception", "sum", window)
+    #metrics[["off_avg_interception_difference", "def_avg_interception_difference"]] = schedule.apply(lambda x: calculate_stat_difference(rolling_interception, x), axis = 1)
+
+    #rolling_fumbles_lost = calculate_stat(schedule, pbp, "fumble_lost", "sum", window)
+    #metrics[[ "off_avg_fumbles_lost_difference", "def_avg_fumbles_lost_difference"]] = schedule.apply(lambda x: calculate_stat_difference(rolling_fumbles_lost, x), axis = 1)
 
     # Rest Days Difference
     metrics["rest_days_difference"] = schedule["home_rest"] - schedule["away_rest"]
