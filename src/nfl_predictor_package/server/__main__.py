@@ -42,8 +42,12 @@ def main(task: str, options: list[str]):
         last_week_schedule = data.schedule[data.schedule["week"] == last_week]
 
         # Evaluate last week predicitons
-        last_week_predictions = get_predictions(season, last_week)
-        evaluate_predictions(last_week_schedule, last_week_predictions)
+        try:
+            last_week_predictions = get_predictions(season, last_week)
+            evaluate_predictions(last_week_schedule, last_week_predictions)
+            
+        except:
+            print("Unable to get last weeks prediction.")
 
         # Load Model
         model = NFLPredictionModel(current_schedule, data.pbp, data.elo_ratings)
