@@ -1,4 +1,4 @@
-from .utils.file_utils import SERVER_DATA_PATH, load_model, save_model, get_dataframe
+from .utils.file_utils import SERVER_DATA_PATH, load_model, save_model, get_dataframe, create_directory
 from .model_utils.features import parse_features, parse_response
 
 from pandas import DataFrame, concat
@@ -84,7 +84,9 @@ class NFLPredictionModel():
             prediction_df = concat([prediction_df, new_row], ignore_index = True)
 
         # Save predictions
-        prediction_df.to_csv(f"{SERVER_DATA_PATH}/{season} NFL Season/Predictions/Week {week}.csv", index = False)
+        path = create_directory(f"{SERVER_DATA_PATH}/{season} NFL Season/Predictions")
+
+        prediction_df.to_csv(f"{path}/Week {week}.csv", index = False)
 
     def save(self, filename: str):
         """Saves the loaded model under the 'src/server/models' directory."""
