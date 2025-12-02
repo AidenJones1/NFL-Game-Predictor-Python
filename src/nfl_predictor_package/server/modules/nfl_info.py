@@ -10,6 +10,7 @@ def get_nfl_time() -> tuple[int, int]:
         tuple(int, int): A tuple containing:
         - int: The current NFL Season.
         - int: The current week of the season. 0 represents offseason relative to the season."""
+    
     path = f"{SERVER_DATA_CONFIGS_PATH}/time_config.json"
     configs = read_json(file_path = path)
 
@@ -37,8 +38,8 @@ def get_teams_names(abbreviated: bool = False) -> Series:
         abbreviated (bool, optional): Choose whether to abbreviate the names. Defaults to False.
 
     Returns:
-        Series: A Series of NFL teams' names.
-    """
+        Series: A Series of NFL teams' names."""
+    
     path = f"{SERVER_DATA_PATH}/Team Info/team_desc.csv"
     teams_df = get_dataframe(filepath = path)
 

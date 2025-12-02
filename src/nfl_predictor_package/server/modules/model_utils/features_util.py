@@ -35,6 +35,7 @@ def calculate_stat(schedule: DataFrame, pbp: DataFrame, stat: str, func: str, wi
     """Examples:\n
         - stat: 'yards_gained', func: 'sum', window: 5 == Averge Total Yards Gained within a 5 game window.
         - stat 'touchdown', func: 'mean', window: 7 == Average Touchdown/Play within a 7 game window."""
+    
     new_sched = (schedule.melt(id_vars = ["game_id", "season", "week"], value_vars = ["home_team", "away_team"], value_name = "team")
         .sort_values(["game_id", "variable"])[["season", "week", "game_id", "team"]])
 

@@ -10,12 +10,14 @@ from sklearn.metrics import accuracy_score, confusion_matrix
 class NFLPredictionModel():
     def __init__(self, schedule: DataFrame, pbp: DataFrame, elo_ratings: DataFrame) -> None:
         """Sets a base for the learning model with the schedule data, play-by-play data, and elo ratings data."""
+        
         self.schedule = schedule
         self.pbp = pbp
         self.elo_ratings = elo_ratings
 
     def create(self):
         """Instantiates a new Linear Regression model and fits it."""
+
         # Drop incomplete rows (likely week 1 data)
         features = parse_features(self.pbp, self.schedule, self.elo_ratings)
         response = parse_response(self.schedule)
@@ -43,6 +45,7 @@ class NFLPredictionModel():
 
     def print_test(self):
         """Test the training model and prints out the results."""
+
         if not self.__check_for_model():
             return
         
@@ -60,6 +63,7 @@ class NFLPredictionModel():
 
     def make_predictions(self):
         """Make a set of predictions with the provided schedule."""
+
         if not self.__check_for_model():
             return
     
@@ -84,6 +88,7 @@ class NFLPredictionModel():
 
     def save(self, filename: str):
         """Saves the loaded model under the 'src/server/models' directory."""
+
         if self.__check_for_model():
             save_model(self.model, filename)
             print("Model saved!!!")
@@ -91,6 +96,7 @@ class NFLPredictionModel():
 
     def load(self, model_file: str):
         """Load a saved model from the 'src/server/models' diretory."""
+
         loaded_model = load_model(model_file)
 
         if not loaded_model:

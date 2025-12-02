@@ -1,11 +1,10 @@
-from modules.nfl import get_nfl_time
-from modules.nfl_utils.nfl_stats_downloader import NFLData
 from modules.model import NFLPredictionModel, evaluate_predictions, get_predictions
+from modules.nfl_info import get_nfl_time
+from modules.nfl_stats import NFLData
 
 import sys
 
 def main(task: str, options: list[str]):
-
     if task == "--train/test":
         season = 2024
         week = 23
@@ -13,7 +12,7 @@ def main(task: str, options: list[str]):
         # Get Data
         data = NFLData(season, week)
 
-        # Model
+        # Create Model
         model = NFLPredictionModel(data.schedule, data.pbp, data.elo_ratings)
         model.create()
 
@@ -21,7 +20,7 @@ def main(task: str, options: list[str]):
         if "--print" in options:
             model.print_test()
 
-        # Save
+        # Save Model
         if "--save" in options:
             model.save("model.pkl")
 
@@ -46,9 +45,11 @@ def main(task: str, options: list[str]):
         last_week_predictions = get_predictions(season, last_week)
         evaluate_predictions(last_week_schedule, last_week_predictions)
 
-        # Model
+        # Load Model
         model = NFLPredictionModel(current_schedule, data.pbp, data.elo_ratings)
         model.load("model.pkl")
+
+        # Make Predictions
         model.make_predictions()
 
 if __name__ == "__main__":
