@@ -36,3 +36,13 @@ def load_model(filename: str):
         return loaded_model
     
     return None
+
+def get_prediction_as_json(season: int, week: int):
+    try:
+        path = f"{SERVER_DATA_PATH}/{season} NFL Season/Predictions/Week {week}.csv"
+        res = read_csv(filepath_or_buffer = path, low_memory = False)
+        return res.to_json(orient = "records")
+
+    except Exception as e:
+        print(f"Error getting prediction file path: {e}")
+        return None
