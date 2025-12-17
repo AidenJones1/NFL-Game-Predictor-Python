@@ -2,10 +2,13 @@ import json
 from os import makedirs, path
 from pandas import DataFrame, read_csv
 import pickle
+from pathlib import Path
 
-SERVER_DATA_CONFIGS_PATH = "./src/nfl_predictor_package/server/data_configs"
-SERVER_DATA_PATH = "./src/nfl_predictor_package/server/data"
-MODEL_PATH = "./src/nfl_predictor_package/server/models"
+PROJECT_FOLDER = Path(__file__).parents[5].absolute().as_posix()
+
+SERVER_DATA_CONFIGS_PATH = f"{PROJECT_FOLDER}/src/nfl_predictor_package/server/data_configs"
+SERVER_DATA_PATH = f"{PROJECT_FOLDER}/src/nfl_predictor_package/server/data"
+MODEL_PATH = f"{PROJECT_FOLDER}/src/nfl_predictor_package/server/models"
 
 def read_json(file_path: str):
     """Retrieve JSON properties from the specified JSON file.
