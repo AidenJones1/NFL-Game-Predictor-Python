@@ -67,12 +67,13 @@ Home teams with Home Field Advantage receives a small ELO bonus. Home teams play
 *Prediction model uses stats from the 2024 NFL Season*
 
 ## Model Performance
-- ${\textsf{\color{aqua} Overall Performance:}}$ <span style="color: white; font-weight: bold;">47 / 75 (62.7%)</span>
+- ${\textsf{\color{aqua} Overall Performance:}}$ <span style="color: white; font-weight: bold;">57 / 91 (62.6%)</span>
 - ${\textsf{\color{aqua} Best Performace*:}}$ <span style="color: gold; font-weight: bold;">12 / 15 (80.0%)</span> *(2025, Week 11)*
 
     *\* Excluding Playoffs*
 
 ## Model Prediction History
+- 2025 Season, Week 15: <span style="color: white; font-weight: bold;">10 / 16 (62.5%)</span>
 - 2025 Season, Week 15: <span style="color: white; font-weight: bold;">8 / 16 (50.0%)</span>
 - 2025 Season, Week 14: <span style="color: white; font-weight: bold;">6 / 14 (42.9%)</span>
 - 2025 Season, Week 13: <span style="color: #873014; font-weight: bold;">11 / 16 (68.8%)</span>
